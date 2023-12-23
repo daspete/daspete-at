@@ -1,0 +1,28 @@
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - 80:80
+        env_file:
+            - .env
+        volumes:
+            - ./nginx:/etc/nginx/templates
+        networks:
+            daspetenetwork:
+                aliases:
+                    - daspete.test
+
+    client:
+        build:
+            context: ./src
+        hostname: client
+        env_file:
+            - .env
+        ports:
+            - 3000:3000
+        networks:
+            - daspetenetwork
+
+networks:
+    daspetenetwork:
+        driver: bridge

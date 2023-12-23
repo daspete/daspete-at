@@ -1,0 +1,33 @@
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - 80:80
+            - 443:443
+        env_file:
+            - .env
+        volumes:
+            - ./nginx:/etc/nginx/templates
+        networks:
+            daspetenetwork:
+                aliases:
+                    - daspete.test
+
+    client:
+        image: node:20
+        hostname: client
+        working_dir: /app
+        volumes:
+            - ./src:/app
+        env_file:
+            - .env
+        ports:
+            - 3000:3000
+            - 24678:24678
+        networks:
+            - daspetenetwork
+        command: sh -c "rm -rf /tmp/nitro/worker-* && yarn && exec yarn dev --host=0.0.0.0"
+
+networks:
+    daspetenetwork:
+        driver: bridge
